@@ -4,8 +4,6 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
-
 const corsOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
   : ["http://localhost:3000"];
