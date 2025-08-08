@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String         @id @default(uuid())
+  username       String         @unique
+  problemsSolved Problem[]
+  summaries      DailySummary[]
+}
+
+model Problem {
+  id           String     @id @default(uuid())
+  title        String
+  leetcodeId   Int
+  solvedAt     DateTime   @default(now())
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  difficulty   Difficulty @relation(fields: [difficultyId], references: [id])
+  difficultyId Int
+  tags         Tag[]      @relation("ProblemTags")
+  language     Language   @relation(fields: [languageId], references: [id])
+  languageId   Int
+  timeSpentMin Int
+}
+
+model DailySummary {
+  id           String   @id @default(uuid())
+  date         DateTime
+  totalMinutes Int
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+}
+
+model Difficulty {
+  id       Int       @id @default(autoincrement())
+  level    String    @unique // "Easy", "Medium", "Hard"
+  problems Problem[]
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  problems Problem[] @relation("ProblemTags")
+}
+
+model Language {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique // "Python", "JavaScript", etc.
+  problems Problem[]
+}
