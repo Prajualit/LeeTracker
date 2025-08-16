@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "LeetTracker",
+  "version": "1.0.0",
+  "description": "Track your LeetCode progress with detailed analytics and statistics",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "http://localhost:5000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "LeetTracker"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["https://leetcode.com/*"]
+    }
+  ]
+}
