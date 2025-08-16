@@ -1,6 +1,7 @@
 {
-  "name": "leettracker",
+  "name": "leetracker-dashboard",
   "version": "0.1.0",
+  "description": "LeetTracker Analytics Dashboard - Detailed analytics and insights for your LeetCode progress",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,6 +12,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-progress": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "axios": "^1.11.0",
@@ -23,7 +25,6 @@
     "react-dom": "19.1.0",
     "recharts": "^3.1.2",
     "tailwind-merge": "^3.3.1",
-    "webextension-polyfill": "^0.12.0",
     "zustand": "^5.0.7"
   },
   "devDependencies": {
