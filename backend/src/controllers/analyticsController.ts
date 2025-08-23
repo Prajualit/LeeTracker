@@ -45,7 +45,7 @@ const getUserAnalytics = asyncHandler(async (req: Request, res: Response) => {
 
   // Basic statistics
   const totalProblems = problems.length;
-  const totalTimeSpent = problems.reduce((sum, p) => sum + p.timeSpentMin, 0);
+  const totalTimeSpent = problems.reduce((sum: number, p: any) => sum + p.timeSpentMin, 0);
   const averageTimePerProblem = totalProblems > 0 ? Math.round((totalTimeSpent / totalProblems) * 100) / 100 : 0;
 
   // Difficulty breakdown
