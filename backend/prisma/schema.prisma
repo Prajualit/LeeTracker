@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -15,10 +14,36 @@ datasource db {
 }
 
 model User {
-  id             String         @id @default(uuid())
-  username       String         @unique
-  problemsSolved Problem[]
-  summaries      DailySummary[]
+  id                     String                 @id @default(uuid())
+  username               String                 @unique
+  leetcodeUsername       String?                @unique
+  problemsSolved         Problem[]
+  summaries              DailySummary[]
+  leetCodeVerifications  LeetCodeVerification[]
+}
+
+model LeetCodeVerification {
+  id                 String                    @id @default(uuid())
+  userId             String
+  leetcodeUsername   String
+  verificationCode   String
+  verificationMethod VerificationMethod        @default(PROFILE_BIO)
+  isVerified         Boolean                   @default(false)
+  verifiedAt         DateTime?
+  expiresAt          DateTime
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  user               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, leetcodeUsername])
+  @@index([leetcodeUsername])
+  @@index([verificationCode])
+}
+
+enum VerificationMethod {
+  PROFILE_BIO
+  GITHUB_OAUTH
+  EMAIL_VERIFICATION
 }
 
 model Problem {
