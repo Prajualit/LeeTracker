@@ -1,155 +1,198 @@
-# LeetTracker Chrome Extension Installation Guide
+# LeetTracker Chrome Extension
 
-## Prerequisites
+A powerful Chrome extension that automatically tracks your LeetCode progress with comprehensive analytics and data synchronization.
 
-1. **Backend API Running**: Make sure your LeetTracker backend is running on `http://localhost:5000`
-   ```bash
-   cd backend
-   npm run dev
-   ```
+## 🚀 Features
 
-2. **Chrome Browser**: You need Google Chrome or any Chromium-based browser
+### Automatic Data Scraping
+- **Profile Setup**: Enter your LeetCode username or profile URL for automatic data collection
+- **Complete Sync**: Scrapes all your solved problems with difficulty, language, and tags
+- **Current Problem**: Instantly add the problem you're currently viewing
+- **Smart Detection**: Automatically detects problem details from LeetCode pages
 
-## Installation Steps
+### Comprehensive Tracking
+- **Problem Statistics**: Total problems solved, time spent, difficulty breakdown
+- **Language Analytics**: Track which programming languages you use most
+- **Tag Analysis**: See which problem categories you've mastered
+- **Progress Visualization**: Beautiful charts and progress bars
 
-### Method 1: Load Unpacked Extension (Development)
+### Seamless Integration
+- **Real-time Sync**: Automatically syncs with your LeetTracker dashboard
+- **Background Monitoring**: Tracks when you solve problems on LeetCode
+- **Manual Override**: Option to manually add problems when needed
+- **Cross-platform**: Works across all your devices
 
-1. **Open Chrome Extensions Page**
-   - Type `chrome://extensions/` in your address bar
-   - Or go to Menu → More Tools → Extensions
+## 📦 Installation
 
-2. **Enable Developer Mode**
-   - Toggle the "Developer mode" switch in the top-right corner
+1. **Download the Extension**
+   - Clone this repository or download the `chrome-extension` folder
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode" in the top right
+   - Click "Load unpacked" and select the `chrome-extension` folder
 
-3. **Load the Extension**
-   - Click "Load unpacked" button
-   - Navigate to your project folder: `c:\NITH\WD\LeetTracker\chrome-extension`
-   - Select the `chrome-extension` folder and click "Select Folder"
+2. **Setup Backend**
+   - Ensure your LeetTracker backend is running on `http://localhost:5000`
+   - The extension will automatically connect to your local backend
 
-4. **Verify Installation**
-   - You should see "LeetTracker" in your extensions list
-   - The extension icon should appear in your browser toolbar
-   - Make sure it's enabled (toggle switch is on)
+3. **Configure Profile**
+   - Click the LeetTracker extension icon
+   - Click "Add Current Problem" 
+   - Enter your LeetCode username or profile URL
+   - Let the extension scrape your existing data
 
-### Method 2: Create CRX Package (Production)
+## 🔧 How to Use
 
-1. **Pack Extension**
-   - In Chrome Extensions page (`chrome://extensions/`)
-   - Click "Pack extension"
-   - Select the `chrome-extension` folder as Extension root directory
-   - Click "Pack Extension"
+### First Time Setup
+1. **Install Extension**: Follow installation steps above
+2. **Open Extension**: Click the LeetTracker icon in your Chrome toolbar
+3. **Setup Profile**: Click "Add Current Problem" → Enter your LeetCode profile
+4. **Auto-Scrape**: The extension will automatically import all your solved problems
 
-2. **Install CRX File**
-   - This creates a `.crx` file that can be distributed
-   - Users can install it by dragging the `.crx` file to Chrome Extensions page
+### Daily Usage
+1. **Solve Problems**: Continue solving problems on LeetCode as usual
+2. **Auto-Detection**: The extension detects when you solve problems
+3. **Quick Add**: Click "Add Current Problem" to manually track a problem
+4. **View Progress**: Check your stats directly in the extension popup
+5. **Full Dashboard**: Click "View Full Dashboard" for detailed analytics
 
-## Testing the Extension
+### Manual Problem Entry
+If auto-scraping fails or you want to add custom data:
+1. Click "Add Current Problem"
+2. Toggle "Show Manual Form"
+3. Fill in problem details manually
+4. Submit to add to your tracker
 
-### 1. Test Backend Connection
-1. Click the LeetTracker icon in your toolbar
-2. The popup should open and show your dashboard
-3. If there are connection errors, check that your backend is running
+## 🎯 Features in Detail
 
-### 2. Test on LeetCode
-1. Go to any LeetCode problem page (e.g., https://leetcode.com/problems/two-sum/)
-2. You should see a "📊 LeetTracker Active" indicator in the top-right corner
-3. Try solving a problem - you should get a congratulations notification
+### Profile Auto-Scraping
+```
+✅ Scrapes solved problems from your LeetCode profile
+✅ Extracts problem titles, IDs, difficulty levels
+✅ Detects programming languages used
+✅ Collects problem tags and categories
+✅ Estimates time spent based on difficulty
+✅ Handles large numbers of problems efficiently
+```
 
-### 3. Test Problem Tracking
-1. On a LeetCode problem page, click the LeetTracker icon
-2. Fill out the "Add Problem" form
-3. Click "Add Problem" - it should sync with your backend
+### Smart Problem Detection
+```
+✅ Automatically fills form from current LeetCode page
+✅ Detects problem difficulty from page content
+✅ Identifies programming language from editor
+✅ Extracts problem tags and metadata
+✅ Generates reasonable time estimates
+```
 
-## Features Overview
+### Data Synchronization
+```
+✅ Real-time sync with backend API
+✅ Avoids duplicate problem entries
+✅ Updates existing problem data
+✅ Handles network errors gracefully
+✅ Progress indicators for long operations
+```
 
-### 🎯 Dashboard Features
-- **Daily Stats**: Today's problems solved, streak, and progress
-- **Problem Breakdown**: Easy/Medium/Hard problem counts
-- **Quick Actions**: Add problems, view analytics, settings
-- **Recent Activity**: Last solved problems with details
+## 🔧 Configuration
 
-### 🔄 Auto-Detection Features
-- **Problem Recognition**: Automatically detects current LeetCode problem
-- **Success Notifications**: Celebrates when you solve problems
-- **Smart Forms**: Pre-fills problem details from page content
+### Backend Connection
+The extension automatically connects to:
+- **API Endpoint**: `http://localhost:5000/api/v1`
+- **Dashboard**: `http://localhost:3000`
 
-### 🔔 Background Features
-- **Daily Reminders**: Optional notifications to maintain coding streak
-- **Auto-Sync**: Keeps data synchronized with backend
-- **Offline Support**: Caches data for offline viewing
+### Storage
+The extension stores:
+- User preferences in Chrome local storage
+- LeetCode profile information
+- Last sync timestamps
+- Problem submission tracking
 
-## Troubleshooting
+## 🌟 Advanced Features
 
-### Extension Not Loading
-- Check that you selected the correct folder (`chrome-extension`)
-- Look for errors in the Extensions page
-- Make sure all files are present
+### Bulk Data Import
+- Import hundreds of problems in one operation
+- Intelligent duplicate detection
+- Progress tracking with detailed status
+- Error handling and retry mechanisms
 
-### Backend Connection Issues
-- Verify backend is running on `http://localhost:5000`
+### Smart Time Estimation
+- Difficulty-based time estimates
+- Randomized realistic durations
+- Historical data analysis
+- User behavior patterns
+
+### Tag and Category Analysis
+- Automatic tag extraction from LeetCode
+- Category-based problem grouping
+- Skill area identification
+- Learning path recommendations
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**Extension not connecting to backend:**
+- Ensure backend is running on `http://localhost:5000`
 - Check browser console for CORS errors
-- Test API directly: visit `http://localhost:5000/api/v1/health`
+- Verify API endpoints are accessible
 
-### LeetCode Integration Not Working
-- Make sure you're on a LeetCode problem page
-- Check if content script loaded (look for the indicator)
-- Try refreshing the page
+**Profile scraping fails:**
+- Check if LeetCode profile is public
+- Verify username/URL format is correct
+- Try manual problem entry as fallback
 
-### Notifications Not Showing
-- Check Chrome notification permissions
-- Go to Chrome Settings → Privacy and Security → Site Settings → Notifications
-- Make sure notifications are allowed for extensions
+**Problems not syncing:**
+- Check network connection
+- Verify backend database is accessible
+- Look for duplicate problem entries
 
-## Permissions Explained
+### Debug Mode
+Enable developer tools in Chrome to see detailed logs:
+1. Right-click extension icon → "Inspect popup"
+2. Check console for error messages
+3. Network tab shows API calls
 
-The extension requests these permissions:
+## 🚧 Development
 
-- **`activeTab`**: To read LeetCode problem information from current tab
-- **`storage`**: To save your preferences and cache data locally
-- **`notifications`**: To show success notifications and reminders
-- **`alarms`**: For daily reminders and periodic sync
-- **`host_permissions`**: Access to LeetCode and your local backend API
-
-## Development Mode
-
-When running in development mode:
-
-1. **Hot Reload**: Changes to popup files are reflected immediately
-2. **Console Debugging**: Check browser console and extension console for logs
-3. **Storage Inspection**: Use Chrome DevTools to inspect extension storage
-4. **Network Monitoring**: Monitor API calls in Network tab
-
-## File Structure
-
+### Project Structure
 ```
 chrome-extension/
 ├── manifest.json          # Extension configuration
-├── popup.html             # Main dashboard UI
-├── popup.css              # Styling with shadcn/ui theme
-├── popup.js               # Dashboard logic and API integration
+├── popup.html             # Extension popup interface
+├── popup.js               # Main extension logic
+├── popup.css              # Styling
 ├── content.js             # LeetCode page integration
-├── background.js          # Service worker for background tasks
-├── icons/                 # Extension icons
-│   ├── icon16.svg
-│   ├── icon48.svg
-│   └── icon128.svg
-└── README.md              # This installation guide
+├── background.js          # Background processes
+└── icons/                 # Extension icons
 ```
 
-## Next Steps
+### Building from Source
+1. Clone the repository
+2. Make your changes to the extension files
+3. Test locally by loading as unpacked extension
+4. Package for distribution using Chrome developer tools
 
-1. **Customize Settings**: Click the settings icon in popup to configure preferences
-2. **Set Daily Goals**: Set your daily problem-solving target
-3. **Enable Notifications**: Turn on daily reminders to maintain streak
-4. **Share Progress**: Use the analytics to track your coding journey
+### API Integration
+The extension communicates with the LeetTracker backend:
+- **Users API**: Create/manage user accounts
+- **Problems API**: Add and retrieve problem data
+- **Analytics API**: Get statistics and insights
 
-## Support
+## 📄 License
 
-If you encounter any issues:
+This project is part of the LeetTracker application suite. See the main repository for license information.
 
-1. Check the browser console for error messages
-2. Verify your backend API is responding
-3. Try reloading the extension
-4. Check Chrome extension permissions
+## 🤝 Contributing
 
-Happy coding! 🚀
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📞 Support
+
+For issues and questions:
+- Check the troubleshooting section above
+- Review browser console logs
+- Create an issue in the main repository
+- Ensure backend and frontend are properly configured

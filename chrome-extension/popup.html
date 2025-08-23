@@ -125,50 +125,149 @@
         <!-- Add Problem Modal -->
         <div id="add-problem-modal" class="fixed inset-0 bg-black-50 hidden items-center justify-center">
             <div class="bg-background border rounded-lg p-6 w-80 mx-4">
-                <h3 class="text-lg font-semibold mb-4">Add Problem</h3>
-                <form id="add-problem-form" class="space-y-4">
-                    <div>
-                        <label class="text-sm font-medium">Problem Title</label>
-                        <input id="problem-title" type="text" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
+                <h3 class="text-lg font-semibold mb-4">Add Current Problem</h3>
+                
+                <!-- Profile Setup Section (shows if no profile configured) -->
+                <div id="profile-setup-section" class="hidden">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h4 class="font-medium text-blue-800">First Time Setup</h4>
+                        </div>
+                        <p class="text-sm text-blue-700 mb-3">
+                            To automatically scrape your LeetCode data, please provide your LeetCode profile:
+                        </p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm font-medium text-blue-800">LeetCode Username or Profile URL</label>
+                                <input id="leetcode-profile" type="text" 
+                                       placeholder="username or https://leetcode.com/u/username/"
+                                       class="w-full border rounded-md px-3 py-2 text-sm mt-1">
+                                <p class="text-xs text-blue-600 mt-1">
+                                    Enter your LeetCode username (e.g., "john_doe") or full profile URL
+                                </p>
+                            </div>
+                            <button id="setup-profile-btn" type="button" 
+                                    class="w-full bg-blue-500 text-white hover:bg-blue-600 py-2 px-3 rounded-md text-sm font-medium">
+                                Setup Profile & Scrape Data
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <label class="text-sm font-medium">LeetCode ID</label>
-                        <input id="problem-id" type="number" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
+                </div>
+
+                <!-- Auto-Scrape Section (shows if profile configured) -->
+                <div id="auto-scrape-section" class="hidden">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h4 class="font-medium text-green-800">Auto-Scrape Available</h4>
+                        </div>
+                        <p class="text-sm text-green-700 mb-3">
+                            Profile: <span id="current-profile" class="font-medium"></span>
+                        </p>
+                        <div class="space-y-2">
+                            <button id="scrape-current-btn" type="button" 
+                                    class="w-full bg-green-500 text-white hover:bg-green-600 py-2 px-3 rounded-md text-sm font-medium">
+                                📊 Scrape Current Problem
+                            </button>
+                            <button id="scrape-all-btn" type="button" 
+                                    class="w-full bg-blue-500 text-white hover:bg-blue-600 py-2 px-3 rounded-md text-sm font-medium">
+                                🔄 Sync All LeetCode Data
+                            </button>
+                            <button id="change-profile-btn" type="button" 
+                                    class="w-full bg-gray-500 text-white hover:bg-gray-600 py-1 px-3 rounded-md text-xs">
+                                Change Profile
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <label class="text-sm font-medium">Difficulty</label>
-                        <select id="problem-difficulty" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
-                            <option value="">Select difficulty</option>
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium">Language</label>
-                        <select id="problem-language" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
-                            <option value="">Select language</option>
-                            <option value="JavaScript">JavaScript</option>
-                            <option value="Python">Python</option>
-                            <option value="Java">Java</option>
-                            <option value="C++">C++</option>
-                            <option value="C">C</option>
-                            <option value="TypeScript">TypeScript</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium">Time Spent (minutes)</label>
-                        <input id="problem-time" type="number" min="1" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
-                    </div>
-                    <div class="flex gap-2 pt-2">
-                        <button type="button" id="cancel-btn" class="flex-1 bg-secondary text-secondary-foreground hover-bg-secondary-80 py-2 px-3 rounded-md text-sm">
-                            Cancel
+                </div>
+
+                <!-- Manual Add Section -->
+                <div id="manual-add-section">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-medium">Manual Entry</h4>
+                        <button id="toggle-manual-btn" type="button" class="text-xs text-blue-500 hover:text-blue-700">
+                            Show Manual Form
                         </button>
-                        <button type="submit" class="flex-1 bg-primary text-primary-foreground hover-bg-primary-90 py-2 px-3 rounded-md text-sm">
-                            Add Problem
-                        </button>
                     </div>
-                </form>
+                    
+                    <form id="add-problem-form" class="space-y-4 hidden">
+                        <div>
+                            <label class="text-sm font-medium">Problem Title</label>
+                            <input id="problem-title" type="text" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium">LeetCode ID</label>
+                            <input id="problem-id" type="number" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium">Difficulty</label>
+                            <select id="problem-difficulty" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
+                                <option value="">Select difficulty</option>
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium">Language</label>
+                            <select id="problem-language" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
+                                <option value="">Select language</option>
+                                <option value="JavaScript">JavaScript</option>
+                                <option value="Python">Python</option>
+                                <option value="Java">Java</option>
+                                <option value="C++">C++</option>
+                                <option value="C">C</option>
+                                <option value="TypeScript">TypeScript</option>
+                                <option value="Go">Go</option>
+                                <option value="Rust">Rust</option>
+                                <option value="Swift">Swift</option>
+                                <option value="Kotlin">Kotlin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium">Time Spent (minutes)</label>
+                            <input id="problem-time" type="number" min="1" class="w-full border rounded-md px-3 py-2 text-sm mt-1" required>
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit" class="flex-1 bg-primary text-primary-foreground hover-bg-primary-90 py-2 px-3 rounded-md text-sm">
+                                Add Problem
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Progress Indicator -->
+                <div id="scraping-progress" class="hidden">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+                            <h4 class="font-medium text-blue-800">Scraping LeetCode Data...</h4>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="text-sm text-blue-700">
+                                <span id="progress-status">Fetching profile data...</span>
+                            </div>
+                            <div class="w-full bg-blue-200 rounded-full h-2">
+                                <div id="progress-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div class="text-xs text-blue-600">
+                                <span id="progress-details">Please wait while we sync your data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div id="modal-actions" class="flex gap-2 pt-4">
+                    <button type="button" id="cancel-btn" class="flex-1 bg-secondary text-secondary-foreground hover-bg-secondary-80 py-2 px-3 rounded-md text-sm">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>
