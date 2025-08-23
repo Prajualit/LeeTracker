@@ -15,6 +15,11 @@ import {
   BarChart3,
   RefreshCw
 } from 'lucide-react';
+import { 
+  apiService, 
+  transformAnalyticsToStats, 
+  transformProblemToFrontend 
+} from '@/lib/api';
 
 interface ProblemStats {
   total: number;
@@ -28,7 +33,7 @@ interface ProblemStats {
 }
 
 interface RecentProblem {
-  id: number;
+  id: string;
   title: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   language: string;
@@ -41,62 +46,74 @@ export default function LeetTrackerDashboard() {
   const [recentProblems, setRecentProblems] = useState<RecentProblem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // For now, we'll use a default username. In a real app, this would come from authentication
+  const username = "demo_user";
 
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Mock data for now - replace with actual API calls
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      // Check if backend is healthy
+      await apiService.healthCheck();
       
-      setStats({
-        total: 76,
-        easy: 45,
-        medium: 23,
-        hard: 8,
-        totalTime: 2340, // minutes
-        averageTime: 31, // minutes
-        streak: 7,
-        lastSolved: '2025-08-16T10:30:00Z'
-      });
+      // Get or create user first
+      let currentUserId = userId;
+      if (!currentUserId) {
+        const user = await apiService.getOrCreateUser(username);
+        currentUserId = user.id;
+        setUserId(currentUserId);
+      }
 
-      setRecentProblems([
-        {
-          id: 1,
-          title: "Two Sum",
-          difficulty: "Easy",
-          language: "JavaScript",
-          timeSpent: 25,
-          solvedAt: "2025-08-16T10:30:00Z"
-        },
-        {
-          id: 2,
-          title: "Add Two Numbers",
-          difficulty: "Medium",
-          language: "Python",
-          timeSpent: 45,
-          solvedAt: "2025-08-16T09:15:00Z"
-        },
-        {
-          id: 3,
-          title: "Longest Substring Without Repeating Characters",
-          difficulty: "Medium",
-          language: "JavaScript",
-          timeSpent: 52,
-          solvedAt: "2025-08-15T16:20:00Z"
-        },
-        {
-          id: 4,
-          title: "Median of Two Sorted Arrays",
-          difficulty: "Hard",
-          language: "Python",
-          timeSpent: 89,
-          solvedAt: "2025-08-15T14:10:00Z"
+      try {
+        // Fetch user analytics and recent problems in parallel
+        const [analytics, recentProblemsData] = await Promise.all([
+          apiService.getUserAnalytics(currentUserId!),
+          apiService.getRecentProblems(currentUserId!, 4)
+        ]);
+
+        // Transform the data to match our frontend interfaces
+        const transformedStats = transformAnalyticsToStats(analytics, recentProblemsData);
+        const transformedProblems = recentProblemsData.map(transformProblemToFrontend);
+
+        setStats(transformedStats);
+        setRecentProblems(transformedProblems);
+      } catch {
+        // If user has no data, show empty state instead of error
+        console.warn('No analytics data found for user, showing empty state');
+        setStats({
+          total: 0,
+          easy: 0,
+          medium: 0,
+          hard: 0,
+          totalTime: 0,
+          averageTime: 0,
+          streak: 0,
+          lastSolved: null
+        });
+        setRecentProblems([]);
+      }
+    } catch (err: unknown) {
+      let errorMessage = 'Failed to fetch data';
+      
+      if (err instanceof Error) {
+        if (err.message?.includes('ECONNREFUSED') || err.message?.includes('Network Error')) {
+          errorMessage = 'Cannot connect to backend server. Please ensure the backend is running on http://localhost:5000';
+        } else {
+          errorMessage = err.message;
         }
-      ]);
-    } catch (err) {
-      setError('Failed to fetch data');
+      } else if (typeof err === 'object' && err !== null && 'response' in err) {
+        const axiosError = err as { response?: { status?: number; data?: { message?: string } } };
+        if (axiosError.response?.status === 404) {
+          errorMessage = 'User not found. Please check if you have any problems recorded.';
+        } else if (axiosError.response?.data?.message) {
+          errorMessage = axiosError.response.data.message;
+        }
+      }
+      
+      setError(errorMessage);
       console.error('Error fetching data:', err);
     } finally {
       setLoading(false);
@@ -105,7 +122,7 @@ export default function LeetTrackerDashboard() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, []); // fetchData is stable since it doesn't depend on any props or state that change
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -152,6 +169,14 @@ export default function LeetTrackerDashboard() {
             </div>
             <h3 className="text-lg font-semibold mb-2">Connection Error</h3>
             <p className="text-gray-600 mb-4">{error}</p>
+            {error.includes('backend server') && (
+              <div className="text-sm text-gray-500 mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium mb-2">To start the backend:</p>
+                <p className="text-left">1. Navigate to the backend folder</p>
+                <p className="text-left">2. Run: <code className="bg-gray-200 px-1 rounded">npm run dev</code></p>
+                <p className="text-left">3. Server should start on port 5000</p>
+              </div>
+            )}
             <Button onClick={fetchData} className="w-full">
               Try Again
             </Button>
@@ -304,34 +329,44 @@ export default function LeetTrackerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentProblems.map((problem, index) => (
-                  <div key={problem.id}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                          <h4 className="font-medium">{problem.title}</h4>
-                          <Badge 
-                            variant="outline" 
-                            className={getDifficultyColor(problem.difficulty)}
-                          >
-                            {problem.difficulty}
-                          </Badge>
+                {recentProblems.length > 0 ? (
+                  recentProblems.map((problem, index) => (
+                    <div key={problem.id}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h4 className="font-medium">{problem.title}</h4>
+                            <Badge 
+                              variant="outline" 
+                              className={getDifficultyColor(problem.difficulty)}
+                            >
+                              {problem.difficulty}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <span>{problem.language}</span>
+                            <span>{formatTime(problem.timeSpent)}</span>
+                            <span>{formatDate(problem.solvedAt)}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span>{problem.language}</span>
-                          <span>{formatTime(problem.timeSpent)}</span>
-                          <span>{formatDate(problem.solvedAt)}</span>
+                        <div className="text-right">
+                          <div className="text-sm font-medium text-green-600">
+                            ✓ Solved
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium text-green-600">
-                          ✓ Solved
-                        </div>
-                      </div>
+                      {index < recentProblems.length - 1 && <Separator className="mt-4" />}
                     </div>
-                    {index < recentProblems.length - 1 && <Separator className="mt-4" />}
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Activity className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <h3 className="text-lg font-medium mb-2">No problems solved yet</h3>
+                    <p className="text-sm">
+                      Start solving problems on LeetCode and they&apos;ll appear here!
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
             </CardContent>
           </Card>
@@ -341,12 +376,28 @@ export default function LeetTrackerDashboard() {
         <Card className="mt-8">
           <CardContent className="pt-6">
             <div className="text-center text-gray-600">
-              <p className="mb-2">
-                📊 This is your detailed analytics dashboard. Use the Chrome extension for quick problem tracking!
-              </p>
-              <p className="text-sm">
-                Install the LeetTracker Chrome extension to automatically track problems while you solve them on LeetCode.
-              </p>
+              {stats?.total === 0 ? (
+                <div>
+                  <p className="mb-2 text-lg font-medium">
+                    � Welcome to LeetTracker!
+                  </p>
+                  <p className="mb-2">
+                    You haven&apos;t tracked any problems yet. Start solving LeetCode problems and use our Chrome extension to automatically track your progress!
+                  </p>
+                  <p className="text-sm">
+                    Install the LeetTracker Chrome extension to automatically track problems while you solve them on LeetCode.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="mb-2">
+                    �📊 This is your detailed analytics dashboard. Use the Chrome extension for quick problem tracking!
+                  </p>
+                  <p className="text-sm">
+                    Install the LeetTracker Chrome extension to automatically track problems while you solve them on LeetCode.
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
