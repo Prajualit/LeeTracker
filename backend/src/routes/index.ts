@@ -6,6 +6,7 @@ import tagRoutes from "./tagRoutes";
 import languageRoutes from "./languageRoutes";
 import difficultyRoutes from "./difficultyRoutes";
 import analyticsRoutes from "./analyticsRoutes";
+import verificationRoutes from "./verificationRoutes";
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.use("/tags", tagRoutes);
 router.use("/languages", languageRoutes);
 router.use("/difficulties", difficultyRoutes);
 router.use("/analytics", analyticsRoutes);
+router.use("/verification", verificationRoutes);
 
 // Health check route
 router.get("/health", (req, res) => {
